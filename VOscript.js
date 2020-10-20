@@ -5,11 +5,8 @@ setTimeout(() => {
 }, 1000);
 
 function SaveNote(event) {
-    const $target = $(event.target);
-    const $tr = $target.closest("tr");
-    const id = $tr.data("id");
+    const id = GetAccountId(event);
     const obj = FindAnnotation(id);
-    console.log("id:" + id);
     console.log(obj);
 }
 
@@ -26,15 +23,17 @@ function FindAnnotation(id) {
     const text = $('#noteandaccres').text().replace(/\r?\n/g, "");
     const obj = JSON.parse(text);
 
-    // const noteId = obj.find(element => element.AccountId === id);
-    // document.location.href = "/_entity/annotation/" + noteId;
-
-    for (let i = 0; i < obj.length; i++) {
-        console.log(obj[i].AccountId + " " + id);
-        if (obj[i].AccountId === id) {
-            document.location.href = "/_entity/annotation/" + obj[i].Note;
-        }
+    let note = obj.find(element => element.AccountId == id);
+    if (typeof note !== "undefined") {
+        document.location.href = "/_entity/annotation/" + note.Note;
     }
+
+    // for (let i = 0; i < obj.length; i++) {
+    //     console.log(obj[i].AccountId + " " + id);
+    //     if (obj[i].AccountId === id) {
+    //         document.location.href = "/_entity/annotation/" + obj[i].Note;
+    //     }
+    // }
 
     return obj;
 }
@@ -48,13 +47,12 @@ function GetSimpleText() {
         success: function (data) {
             data = JSON.parse(data);
             AddButtonToTable(5, '<input type="button" value=' + data[0].SimpleText + ' id=' + data[0].SimpleText + ' class="btn btn-primary"/>');
-            $("table tbody tr #"+ data[0].SimpleText +"").bind("click", CreateContact);
+            $("table tbody tr #" + data[0].SimpleText + "").bind("click", GetAccountId);
 
             console.log(data[0].SimpleText);
         }
     });
 }
-
 
 function AddButtonToTable(index, btn) {
     const rows = $('table tbody tr');
@@ -64,9 +62,10 @@ function AddButtonToTable(index, btn) {
     }
 }
 
-function CreateContact(event) {
+function GetAccountId(event) {
     const $target = $(event.target);
     const $tr = $target.closest("tr");
     const id = $tr.data("id");
-    console.log(id+": qqqqq");
+    console.log(id + ": qqqqq");
+    return id;
 }
